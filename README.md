@@ -19,10 +19,49 @@ This project is **not affiliated, sponsored, or approved by DJI**. DJI is a regi
 
 ### Installation
 
+#### Linux
+
 You can install PyOsmoGPS using pip:
 
 ```bash
 pip install pyosmogps
+```
+
+You will need to have ffmpeg installed on your system to extract the GPS data from the video files. You can install it using the following command:
+
+```bash
+sudo apt-get install ffmpeg
+```
+
+or using the package manager of your distribution.
+
+#### Windows
+
+You can install PyOsmoGPS using pip:
+
+```bash
+pip install pyosmogps
+```
+
+You will need to have ffmpeg installed on your system to extract the GPS data from the video files. You can download it from the [official website](https://ffmpeg.org/download.html) and add it to your system path.
+Or you can use the [Chocolatey](https://chocolatey.org/) package manager to install it:
+
+```bash
+choco install ffmpeg
+```
+
+or winget:
+
+```bash
+winget install ffmpeg
+```
+
+Remember to restart your terminal after installing ffmpeg to make sure the changes take effect.
+
+Moreover, on windows the shortcut `pyosmogps` is not created, so you can use the following command to run the tool:
+
+```bash
+python -m pyosmogps ...
 ```
 
 ### Usage
