@@ -47,10 +47,10 @@ def _make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--resampling-method",
         "-r",
-        choices=["discard", "interpolate", "lpf"],
+        choices=["discard", "linear", "lpf"],
         default="interpolate",
         help="Set the method for resampling data: 'discard' to drop "
-        "excess samples, 'interpolate' for linear interpolation, 'lpf' "
+        "excess samples, 'linear' for linear interpolation, 'lpf' "
         "for low pass filtering (default: interpolate).",
     )
     parser.add_argument(
