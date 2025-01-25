@@ -6,7 +6,8 @@ on:
       - "v*"  # Trigger only for tags starting with "v"
 
 jobs:
-  build-and-publish:
+  pypi-publish:
+    name: upload release to PyPI
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
