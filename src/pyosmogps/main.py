@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pyosmogps
 
+from .data_filters import resample_gps_data
 from .ffmpeg_manager import extract_dji_metadata_stream, get_total_frame_count
 from .gpx_manager import write_gpx_file
 from .metadata_manager import extract_gps_info
@@ -34,8 +35,7 @@ def _make_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "output",
-        nargs="+",
-        help="Output file(s). Accepts a single file or multiple files.",
+        help="Output file. Accepts a single file or multiple files.",
     )
     parser.add_argument(
         "--frequency",
@@ -66,13 +66,13 @@ def _make_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def extract(inputs, output, frequency, resampling_method, timezone_offset=0):
-    print(f"Running extract command with inputs: {inputs} and outputs: {output}")
+def extract(
+    inputs, output_file, output_frequency, resampling_method, timezone_offset=0
+):
+    print(f"Running extract command with inputs: {inputs} and output: {output_file}")
 
-    if len(inputs) != len(output):
-        raise ValueError("Number of input files must match the number of output files.")
-
-    for i, (input_file, output_file) in enumerate(zip(inputs, output), start=1):
+    global_gps_info = []
+    for i, input_file in enumerate(inputs, start=1):
         print(f"Processing file {i}/{len(inputs)}: {input_file} -> {output_file}")
 
         input_frame_rate, video_duration = get_total_frame_count(input_file)
@@ -89,10 +89,14 @@ def extract(inputs, output, frequency, resampling_method, timezone_offset=0):
         except FileNotFoundError:
             pass
 
-        # TODO: Resample data
+        global_gps_info.extend(gps_info)
 
-        if gps_info != []:
-            write_gpx_file(output_file, gps_info)
+    global_gps_info = resample_gps_data(
+        global_gps_info, input_frame_rate, output_frequency, resampling_method
+    )
+
+    if global_gps_info != []:
+        write_gpx_file(output_file, global_gps_info)
 
 
 def main() -> int:
