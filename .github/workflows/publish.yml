@@ -28,9 +28,14 @@ jobs:
 
       - name: Update version in __init__.py
         run: |
-          sed -i "s/major=[0-9]\\+/major=${{ env.VERSION%%.* }}/" src/pyosmogps/__init__.py
-          sed -i "s/minor=[0-9]\\+/minor=$(echo ${{ env.VERSION }} | cut -d. -f2)/" src/pyosmogps/__init__.py
-          sed -i "s/micro=[0-9]\\+/micro=$(echo ${{ env.VERSION }} | cut -d. -f3)/" src/pyosmogps/__init__.py
+          VERSION="${{ env.VERSION }}"
+          MAJOR=$(echo "$VERSION" | awk -F. '{print $1}')
+          MINOR=$(echo "$VERSION" | awk -F. '{print $2}')
+          MICRO=$(echo "$VERSION" | awk -F. '{print $3}')
+
+          sed -i "s/major=[0-9]\\+/major=$MAJOR/" src/pyosmogps/__init__.py
+          sed -i "s/minor=[0-9]\\+/minor=$MINOR/" src/pyosmogps/__init__.py
+          sed -i "s/micro=[0-9]\\+/micro=$MICRO/" src/pyosmogps/__init__.py
           sed -i "s/releaselevel=[^,]\\+/releaselevel='gh-action'/" src/pyosmogps/__init__.py
           cat src/pyosmogps/__init__.py
 
