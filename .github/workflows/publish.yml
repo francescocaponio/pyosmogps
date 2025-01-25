@@ -1,0 +1,53 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"  # Trigger only for tags starting with "v"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Update version in setup.cfg for build only
+        run: |
+          sed -i "s/^version = .*/version = ${{ env.VERSION }}/" setup.cfg
+          cat setup.cfg
+
+      - name: Update version in __init__.py for build only
+        run: |
+          sed -i "s/major=[0-9]\\+/major=${{ env.VERSION%%.* }}/" src/pyosmogps/__init__.py
+          sed -i "s/minor=[0-9]\\+/minor=${{ env.VERSION#*.}%%.*}/" src/pyosmogps/__init__.py
+          sed -i "s/micro=[0-9]\\+/micro=${{ env.VERSION##*. }}/" src/pyosmogps/__init__.py
+          cat src/pyosmogps/__init__.py
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: "__token__"
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload dist/*
