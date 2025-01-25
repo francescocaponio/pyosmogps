@@ -119,7 +119,7 @@ pyosmogps -t 6 -f 0.1 -r discard extract input.mp4 output.gpx
 pyosmogps -t 6 -f 0.1 -r linear extract input.mp4 output.gpx
 ```
 
-- The `light blue` track is processed with the **low-pass filter**, it is a lot smoother because it uses more neighboring points to filter the data, lowering the output noise in the coordinates. As you can notice on the image, where the changes are fast, it may result lessa accurate tha the other methods. This is done with the following command:
+- The `light blue` track is processed with the **low-pass filter**, it is a lot smoother because it uses more neighboring points to filter the data, lowering the output noise in the coordinates. As you can notice on the image, where the changes are fast, it may result less accurate than the other 2 methods. This is done with the following command:
 
 ```bash
 pyosmogps -t 6 -f 0.1 -r lpf extract input.mp4 output.gpx
