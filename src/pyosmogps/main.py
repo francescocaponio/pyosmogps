@@ -97,6 +97,11 @@ def extract(
 
     if global_gps_info != []:
         write_gpx_file(output_file, global_gps_info)
+        print(f"GPS data written to {output_file}")
+        return True
+    else:
+        print("No GPS data extracted.")
+        return False
 
 
 def main() -> int:
@@ -113,7 +118,10 @@ def main() -> int:
                 "'extract' command requires at least one input file and one "
                 "output file."
             )
-        extract(args.inputs, args.output, args.frequency, args.resampling_method)
+        success = extract(
+            args.inputs, args.output, args.frequency, args.resampling_method
+        )
+        return 0 if success else 1
 
     elif args.command == "merge":
         print("Running merge command...")
