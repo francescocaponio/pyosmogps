@@ -9,16 +9,18 @@ logger = logging.getLogger(__name__)  # pylint: disable=C0103
 
 # TODO: add tests
 
+# Supported models:
+# dvtm_ac203.proto is the Osmo Action 4 camera model
+# dvtm_ac204.proto is the Osmo Action 5 camera model (untested, as I don't have one)
+supported_models = ["dvtm_ac203.proto", "dvtm_ac204.proto"]
+
 
 def check_camera_model(message):
     """Check the camera model from the message."""
-    # camera name is a string, we do the check on the proto_name,
+    # camera name is a string that contains the camera model
+    # we do the compatibility check on the proto_name,
     # like is done in the exiftool repository:
     # https://exiftool.org/TagNames/DJI.html#Protobuf
-    #
-    # Supported models:
-    # dvtm_ac203.proto is the Osmo Action 4 camera model
-    # dvtm_ac204.proto is the Osmo Action 5 camera model (untested, as I don't have one)
 
     try:
         camera_model = message.video_global_info.module_info[0].camera_name
@@ -37,7 +39,7 @@ def check_camera_model(message):
     except Exception as e:
         logger.error(f"Error during the camera proto_name: {e}")
         proto_name = ""
-    if proto_name != "dvtm_ac203.proto" and proto_name != "dvtm_ac204.proto":
+    if proto_name not in supported_models:
         raise ValueError(
             "The camera model is not a supported Osmo Action camera (yet?)."
         )
