@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-
+    environment: pypi
     permissions:
       id-token: write
       contents: read
@@ -52,8 +52,5 @@ jobs:
       - name: Build package
         run: python -m build
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: "__token__"
-        run: |
-          python -m twine upload dist/*
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
