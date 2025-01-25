@@ -25,11 +25,13 @@ jobs:
           sed -i "s/^version = .*/version = ${{ env.VERSION }}/" setup.cfg
           cat setup.cfg
 
-      - name: Update version in __init__.py for build only
+
+      - name: Update version in __init__.py
         run: |
           sed -i "s/major=[0-9]\\+/major=${{ env.VERSION%%.* }}/" src/pyosmogps/__init__.py
-          sed -i "s/minor=[0-9]\\+/minor=${{ env.VERSION#*.}%%.*}/" src/pyosmogps/__init__.py
-          sed -i "s/micro=[0-9]\\+/micro=${{ env.VERSION##*. }}/" src/pyosmogps/__init__.py
+          sed -i "s/minor=[0-9]\\+/minor=$(echo ${{ env.VERSION }} | cut -d. -f2)/" src/pyosmogps/__init__.py
+          sed -i "s/micro=[0-9]\\+/micro=$(echo ${{ env.VERSION }} | cut -d. -f3)/" src/pyosmogps/__init__.py
+          sed -i "s/releaselevel=[^,]\\+/releaselevel='gh-action'/" src/pyosmogps/__init__.py
           cat src/pyosmogps/__init__.py
 
       - name: Set up Python
@@ -48,6 +50,5 @@ jobs:
       - name: Publish to PyPI
         env:
           TWINE_USERNAME: "__token__"
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           python -m twine upload dist/*
