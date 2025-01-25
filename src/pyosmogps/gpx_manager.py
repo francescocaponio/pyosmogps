@@ -8,6 +8,7 @@ import gpxpy.gpx
 def write_gpx_file(output_file, gps_data, write_extensions=False):
 
     gpx = gpxpy.gpx.GPX()
+    gpx.creator = "pyosmogps -- https://github.com/francescocaponio/pyosmogps"
     track = gpxpy.gpx.GPXTrack()
     gpx.tracks.append(track)
     segment = gpxpy.gpx.GPXTrackSegment()

@@ -91,7 +91,8 @@ def extract(inputs, output, frequency, resampling_method, timezone_offset=0):
 
         # TODO: Resample data
 
-        write_gpx_file(output_file, gps_info)
+        if gps_info != []:
+            write_gpx_file(output_file, gps_info)
 
 
 def main() -> int:
