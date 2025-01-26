@@ -1,17 +1,10 @@
 import argparse
 import logging
 import logging.config
-import os
 import sys
-import tempfile
-from pathlib import Path
 
-import pyosmogps
-
-from .data_filters import resample_gps_data
-from .ffmpeg_manager import extract_dji_metadata_stream, get_total_frame_count
-from .gpx_manager import write_gpx_file
-from .metadata_manager import extract_gps_info
+from . import OsmoGps
+from . import __version__ as pyosmogps_version
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 
@@ -47,11 +40,11 @@ def _make_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--resampling-method",
         "-r",
-        choices=["discard", "linear", "lpf"],
-        default="interpolate",
+        choices=["discard", "linear", "lpf", "none"],
+        default="linear",
         help="Set the method for resampling data: 'discard' to drop "
         "excess samples, 'linear' for linear interpolation, 'lpf' "
-        "for low pass filtering (default: interpolate).",
+        "for low pass filtering, 'none' for no data reduction (default: linear).",
     )
     parser.add_argument(
         "--timezone-offset",
@@ -61,47 +54,21 @@ def _make_parser() -> argparse.ArgumentParser:
         help="Set the timezone offset in hours (default: 0).",
     )
     parser.add_argument(
-        "--version", "-v", action="version", version=f"%(prog)s {pyosmogps.__version__}"
+        "--version", "-v", action="version", version=f"%(prog)s {pyosmogps_version}"
     )
     return parser
 
 
-def extract(
-    inputs, output_file, output_frequency, resampling_method, timezone_offset=0
-):
-    print(f"Running extract command with inputs: {inputs} and output: {output_file}")
+def extract(inputs, output, frequency, resampling_method, timezone_offset=0) -> bool:
+    try:
+        gps = OsmoGps(inputs, timezone_offset)
+        gps.resample(frequency, resampling_method)
+        gps.save_gpx(output)
 
-    global_gps_info = []
-    for i, input_file in enumerate(inputs, start=1):
-        print(f"Processing file {i}/{len(inputs)}: {input_file} -> {output_file}")
-
-        input_frame_rate, video_duration = get_total_frame_count(input_file)
-        print(f"Frame rate: {input_frame_rate}, duration: {video_duration}")
-
-        temp_file = os.path.join(tempfile.gettempdir(), Path(input_file).stem + ".tmp")
-        extract_dji_metadata_stream(input_file, temp_file)
-
-        gps_info = extract_gps_info(temp_file, timezone_offset)
-        print(f"Extracted {len(gps_info)} GPS data points.")
-
-        try:
-            os.remove(temp_file)
-        except FileNotFoundError:
-            pass
-
-        global_gps_info.extend(gps_info)
-
-    global_gps_info = resample_gps_data(
-        global_gps_info, input_frame_rate, output_frequency, resampling_method
-    )
-
-    if global_gps_info != []:
-        write_gpx_file(output_file, global_gps_info)
-        print(f"GPS data written to {output_file}")
-        return True
-    else:
-        print("No GPS data extracted.")
+    except Exception as e:
+        logger.error(f"Error: {e}")
         return False
+    return True
 
 
 def main() -> int:
@@ -119,7 +86,11 @@ def main() -> int:
                 "output file."
             )
         success = extract(
-            args.inputs, args.output, args.frequency, args.resampling_method
+            args.inputs,
+            args.output,
+            args.frequency,
+            args.resampling_method,
+            args.timezone_offset,
         )
         return 0 if success else 1
 

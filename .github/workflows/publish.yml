@@ -21,11 +21,19 @@ jobs:
       - name: Extract version from tag
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
+      - name: Check CHANGELOG.md for Unreleased
+        run: |
+          if grep -q "\[Unreleased\]" CHANGELOG.md; then
+            echo "Error: CHANGELOG.md contains [Unreleased]. Update it before publishing."
+            exit 1
+          else
+            echo "CHANGELOG.md is ready for release."
+          fi
+
       - name: Update version in setup.cfg for build only
         run: |
           sed -i "s/^version = .*/version = ${{ env.VERSION }}/" setup.cfg
           cat setup.cfg
-
 
       - name: Update version in __init__.py
         run: |

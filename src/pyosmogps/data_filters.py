@@ -26,12 +26,12 @@ def discard_resample_gps_data(gps_info, input_frequency, output_frequency):
     return resampled_data
 
 
-def lpf_resample_gps_data(gps_info, input_frame_rate, output_frequency):
+def lpf_resample_gps_data(gps_info, input_frequency, output_frequency):
     """
     Resample the GPS data using a low pass filter method.
 
     :param gps_info: List of dicts containing GPS data.
-    :param input_frame_rate: Original frame rate of the GPS data (Hz).
+    :param input_frequency: Original frame rate of the GPS data (Hz).
     :param output_frequency: Desired frequency of the GPS data (Hz).
     :return: Resampled list of dicts.
     """
@@ -40,7 +40,7 @@ def lpf_resample_gps_data(gps_info, input_frame_rate, output_frequency):
     cutoff_frequency = output_frequency / 4.0
 
     # Design the Butterworth low-pass filter
-    nyquist = 0.5 * input_frame_rate
+    nyquist = 0.5 * input_frequency
     normal_cutoff = cutoff_frequency / nyquist
     b, a = butter(4, normal_cutoff, btype="low", analog=False)
 
@@ -86,12 +86,12 @@ def lpf_resample_gps_data(gps_info, input_frame_rate, output_frequency):
     return resampled_data
 
 
-def linear_resample_gps_data(gps_info, input_frame_rate, output_frequency):
+def linear_resample_gps_data(gps_info, input_frequency, output_frequency):
     """
     Resample the GPS data using a linear interpolation method.
 
     :param gps_info: List of dicts containing GPS data.
-    :param input_frame_rate: Original frame rate of the GPS data (Hz).
+    :param input_frequency: Original frame rate of the GPS data (Hz).
     :param output_frequency: Desired frequency of the GPS data (Hz).
     :return: Resampled list of dicts.
     """
@@ -135,26 +135,5 @@ def linear_resample_gps_data(gps_info, input_frame_rate, output_frequency):
             new_entry[key] = new_value
 
         resampled_data.append(new_entry)
-
-    return resampled_data
-
-
-def resample_gps_data(gps_info, input_frame_rate, output_frequency, resampling_method):
-    """Resample the GPS data using the specified method."""
-
-    print("Resampling GPS data...")
-
-    if resampling_method == "linear":
-        resampled_data = linear_resample_gps_data(
-            gps_info, input_frame_rate, output_frequency
-        )
-    elif resampling_method == "lpf":
-        resampled_data = lpf_resample_gps_data(
-            gps_info, input_frame_rate, output_frequency
-        )
-    elif resampling_method == "discard":
-        resampled_data = discard_resample_gps_data(
-            gps_info, input_frame_rate, output_frequency
-        )
 
     return resampled_data

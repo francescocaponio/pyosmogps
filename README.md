@@ -75,6 +75,32 @@ The GPS data is stored when the camera is successfully connected to the remote c
 
 A compatible tool for the video overlay creation is [gopro-dashboard-overlay](https://github.com/time4tea/gopro-dashboard-overlay), which has a gpx input mode that can be used with the output of PyOsmoGPS.
 
+#### Python Library
+
+You can use PyOsmoGPS as a Python library to extract GPS data from video files and save it as a GPX file. Here is an example of how to use the library:
+
+```python
+from pyosmogps import OsmoGps
+
+
+# Create an instance of the OsmoGps class
+
+inputs = ["path/to/input1.mp4", "path/to/input2.mp4", "path/to/input3.mp4"]
+timezone_offset = 6  # Timezone offset in hours
+gps = OsmoGps(inputs, timezone_offset)
+
+# resample the data
+
+frequency = 5  # Output frequency in Hz
+resampling_method = "lpf"  # Resampling method (lpf, linear, discard)
+gps.resample(frequency, resampling_method)
+
+# save it as a GPX file
+
+output = "path/to/output.gpx"
+gps.save_gpx(output)
+```
+
 #### Command-Line Tool
 
 To extract GPS data from a video file and save it as a GPX file, you can use the following command:

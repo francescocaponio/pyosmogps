@@ -1,5 +1,7 @@
 from typing import NamedTuple
 
+from .pyosmogps import OsmoGps  # noqa: F401
+
 __package_name__ = "pyosmogps"
 
 

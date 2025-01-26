@@ -46,7 +46,7 @@ def check_camera_model(message):
     return True
 
 
-def extract_gps_info(input_file, timezone_offset=0):
+def extract_gps_info(input_file, timezone_offset=0, extract_extensions=False):
 
     with open(input_file, "rb") as f:
         data = f.read()
@@ -69,23 +69,29 @@ def extract_gps_info(input_file, timezone_offset=0):
             gpsdate = parser.parse(gps.remote_gps_info.coordinates.datetime.datetime)
             homedate = gpsdate - timedelta(hours=timezone_offset)
 
-            gps_data.append(
-                {
-                    "timeinfo": homedate,
-                    "altitude": gps.remote_gps_info.coordinates.gps_altitude_mm / 1000,
-                    "longitude": gps.remote_gps_info.coordinates.info.longitude,
-                    "latitude": gps.remote_gps_info.coordinates.info.latitude,
-                    "camera_acc_x": gps.camera_info.accelerometer1.x,
-                    "camera_acc_y": gps.camera_info.accelerometer1.y,
-                    "camera_acc_z": gps.camera_info.accelerometer1.z,
-                    "camera_acc2_x": gps.camera_info.accelerometer2.x,
-                    "camera_acc2_y": gps.camera_info.accelerometer2.y,
-                    "camera_acc2_z": gps.camera_info.accelerometer2.z,
-                    "remote_der_x": gps.remote_gps_info.derivatives.x,
-                    "remote_der_y": gps.remote_gps_info.derivatives.y,
-                    "remote_der_z": gps.remote_gps_info.derivatives.z,
-                }
-            )
+            gps_point = {
+                "timeinfo": homedate,
+                "altitude": gps.remote_gps_info.coordinates.gps_altitude_mm / 1000,
+                "longitude": gps.remote_gps_info.coordinates.info.longitude,
+                "latitude": gps.remote_gps_info.coordinates.info.latitude,
+            }
+
+            if extract_extensions:
+                gps_point.update(
+                    {
+                        "camera_acc_x": gps.camera_info.accelerometer1.x,
+                        "camera_acc_y": gps.camera_info.accelerometer1.y,
+                        "camera_acc_z": gps.camera_info.accelerometer1.z,
+                        "camera_acc2_x": gps.camera_info.accelerometer2.x,
+                        "camera_acc2_y": gps.camera_info.accelerometer2.y,
+                        "camera_acc2_z": gps.camera_info.accelerometer2.z,
+                        "remote_der_x": gps.remote_gps_info.derivatives.x,
+                        "remote_der_y": gps.remote_gps_info.derivatives.y,
+                        "remote_der_z": gps.remote_gps_info.derivatives.z,
+                    }
+                )
+
+            gps_data.append(gps_point)
         except Exception as e:
             logger.warning(f"Error parsing GPS entry: {e}")
             continue
