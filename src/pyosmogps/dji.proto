@@ -99,7 +99,23 @@ message DjiGpsInfo {
     DjiRemoteGpsInfo remote_gps_info = 4;
 }
 
+message VideoStreamInfoDetails {
+    uint32 width = 1;
+    uint32 height = 2;
+    float frame_rate = 3;
+    uint32 unk1 = 4;
+    uint32 unk2 = 5;
+    uint32 unk3 = 6;
+    uint32 unk5 = 8;
+}
+
+message VideoStreamInfo {
+    string type = 1;
+    VideoStreamInfoDetails details = 3;
+}
+
 message GenericMessage {
     DjiVideoGlobalInfo          video_global_info = 1;
+    VideoStreamInfo             video_stream_info = 2;
     repeated DjiGpsInfo   gps_info = 3;
 }

@@ -46,19 +46,22 @@ def check_camera_model(message):
     return True
 
 
-def extract_gps_info(input_file, timezone_offset=0, extract_extensions=False):
-
-    with open(input_file, "rb") as f:
-        data = f.read()
+def extract_gps_info(metadata, timezone_offset=0, extract_extensions=False):
 
     message = GenericMessage()
     try:
-        message.ParseFromString(data)
+        message.ParseFromString(metadata)
     except Exception as e:
         print(f"Error during the decode operation: {e}")
         exit(-1)
 
     check_camera_model(message)
+
+    frame_rate = None
+    try:
+        frame_rate = message.video_stream_info.details.frame_rate
+    except Exception as e:
+        logger.error(f"Error during the frame rate extraction: {e}")
 
     # TODO: check that the message contains the GPS data
 
@@ -96,4 +99,4 @@ def extract_gps_info(input_file, timezone_offset=0, extract_extensions=False):
             logger.warning(f"Error parsing GPS entry: {e}")
             continue
 
-    return gps_data
+    return gps_data, frame_rate

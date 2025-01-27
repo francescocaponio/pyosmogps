@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.2.0] - 2025-01-28
+
+- Removed dependency from ffmpeg
+
 ## [v0.1.0] - 2025-01-26
 
 - Added Python library with OsmoGps class

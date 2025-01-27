@@ -27,14 +27,6 @@ You can install PyOsmoGPS using pip:
 pip install pyosmogps
 ```
 
-You will need to have ffmpeg installed on your system to extract the GPS data from the video files. You can install it using the following command:
-
-```bash
-sudo apt-get install ffmpeg
-```
-
-or using the package manager of your distribution.
-
 #### Windows
 
 You can install PyOsmoGPS using pip:
@@ -43,22 +35,7 @@ You can install PyOsmoGPS using pip:
 pip install pyosmogps
 ```
 
-You will need to have ffmpeg installed on your system to extract the GPS data from the video files. You can download it from the [official website](https://ffmpeg.org/download.html) and add it to your system path.
-Or you can use the [Chocolatey](https://chocolatey.org/) package manager to install it:
-
-```bash
-choco install ffmpeg
-```
-
-or winget:
-
-```bash
-winget install ffmpeg
-```
-
-Remember to restart your terminal after installing ffmpeg to make sure the changes take effect.
-
-Moreover, on windows the shortcut `pyosmogps` is not created, so you can use the following command to run the tool:
+On windows the shortcut `pyosmogps` is not created, so you can use the following command to run the tool:
 
 ```bash
 python -m pyosmogps ...
@@ -66,7 +43,7 @@ python -m pyosmogps ...
 
 ### Usage
 
-You can use PyOsmoGPS as a command-line tool or as a Docker container. The tool checks that the input video file is compatible with the DJI Osmo Action 4 or 5 cameras and that it contains GPS data, extracting it and converting it to a `.gpx` file. It can be used to create video overlays with GPS data or to analyze the GPS track.
+You can use PyOsmoGPS as a python library, a command-line tool or as a Docker container. The tool checks that the input video file is compatible with the DJI Osmo Action 4 or 5 cameras and that it contains GPS data, extracting it and converting it to a `.gpx` file. It can be used to create video overlays with GPS data or to analyze the GPS track.
 
 The GPS data is stored when the camera is successfully connected to the remote controller and the GPS signal is acquired. The data is embedded in the video file and can be extracted using PyOsmoGPS.
 
@@ -146,7 +123,7 @@ Available soon!
 ### How it works
 
 PyOsmoGPS reads the GPS data embedded in the video files created by the DJI Osmo Action 4 or 5 cameras. The GPS data is stored in the video file as metadata and can be extracted using PyOsmoGPS.
-PyOsmoGPS reads the GPS data from the video using ffmpeg to extract the binary metadata, then it uses the protobuf library to parse the binary data and extract the GPS coordinates. The extracted GPS coordinates can be written in a GPX file, which is a standard format for GPS data that can be used with various tools and services.
+PyOsmoGPS reads the GPS data from the video extracting the binary metadata, then it uses the protobuf library to parse the binary data and extract the GPS coordinates. The extracted GPS coordinates can be written in a GPX file, which is a standard format for GPS data that can be used with various tools and services.
 
 #### Data filtering
 

@@ -1,8 +1,5 @@
 import logging
-import os
-import tempfile
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
 import gpxpy.gpx
 
@@ -11,8 +8,8 @@ from .data_filters import (
     linear_resample_gps_data,
     lpf_resample_gps_data,
 )
-from .ffmpeg_manager import extract_dji_metadata_stream, get_total_frame_count
 from .metadata_manager import extract_gps_info
+from .mp4_manager import MP4Manager
 
 logger = logging.getLogger(__name__)  # pylint: disable=C0103
 
@@ -21,7 +18,6 @@ class OsmoGps:
     gps_data = None
     inputs = None
     input_frame_rate = None
-    input_duration = 0
     output_frequency = None
     resampling_method = None
     extract_extensions = False
@@ -43,25 +39,15 @@ class OsmoGps:
         for i, input_file in enumerate(self.inputs, start=1):
             logger.info(f"Processing file {i}/{len(self.inputs)}: {input_file}")
 
-            input_frame_rate, video_duration = get_total_frame_count(input_file)
-            logger.info(f"Frame rate: {input_frame_rate}, duration: {video_duration}")
+            mp4 = MP4Manager(input_file)
+            metadata = mp4.get_metadata()
+
+            gps_info, input_frame_rate = extract_gps_info(
+                metadata, self.timezone_offset, self.extract_extensions
+            )
+            logger.info(f"Frame rate: {input_frame_rate}")
             self.input_frame_rate = input_frame_rate
-            self.input_duration += video_duration
-
-            temp_file = os.path.join(
-                tempfile.gettempdir(), Path(input_file).stem + ".tmp"
-            )
-            extract_dji_metadata_stream(input_file, temp_file)
-
-            gps_info = extract_gps_info(
-                temp_file, self.timezone_offset, self.extract_extensions
-            )
             logger.info(f"Extracted {len(gps_info)} GPS data points.")
-
-            try:
-                os.remove(temp_file)
-            except FileNotFoundError:
-                pass
 
             self.gps_data.extend(gps_info)
 
