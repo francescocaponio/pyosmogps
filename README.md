@@ -61,22 +61,25 @@ from pyosmogps import OsmoGps
 
 
 # Create an instance of the OsmoGps class
-
 inputs = ["path/to/input1.mp4", "path/to/input2.mp4", "path/to/input3.mp4"]
 timezone_offset = 6  # Timezone offset in hours
 gps = OsmoGps(inputs, timezone_offset)
 
 # resample the data
-
 frequency = 5  # Output frequency in Hz
 resampling_method = "lpf"  # Resampling method (lpf, linear, discard)
 gps.resample(frequency, resampling_method)
 
 # save it as a GPX file
-
 output = "path/to/output.gpx"
 gps.save_gpx(output)
 ```
+
+##### Example of use in Jupyter Lab
+
+![Jupyter Lab Example](assets/jupyter-lab.png)
+
+The image shows the processing of a video file with the GPS data extracted and saved as a GPX file. The data is also plotted with matplotlib to visualize the Altitude, Latitude and Longitude.
 
 #### Command-Line Tool
 
