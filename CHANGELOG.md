@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - 2025-01-28
+
+- Added compatibility for shorter videos (chunk offsets encoded in 32 bits)
+- Extracted video (resolution, frame rate and duration) info from the mp4 file
+
 ## [v0.2.0] - 2025-01-28
 
 - Removed dependency from ffmpeg
