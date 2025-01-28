@@ -459,8 +459,8 @@ class MP4Manager:
 
         :param chunk_data: Binary data of the extracted chunk.
         """
-        if self.metadata:
-            chunk_data += self.metadata
+        if self.metadata is not None:
+            self.metadata += chunk_data
         else:
             self.metadata = chunk_data
 

@@ -70,11 +70,10 @@ class OsmoGps:
                         "output_frequency cannot be None when "
                         "resampling_method is not 'none'"
                     )
-        logger.info(
-            f"Resampling GPS data with method: {self.resampling_method}, "
-            f"output frequency: {self.output_frequency}"
-        )
-        if self.resampling_method is not None:
+            logger.info(
+                f"Resampling GPS data with method: {self.resampling_method}, "
+                f"output frequency: {self.output_frequency}"
+            )
             if self.resampling_method == "linear":
                 resampled_data = linear_resample_gps_data(
                     self.gps_data, self.input_frame_rate, self.output_frequency
