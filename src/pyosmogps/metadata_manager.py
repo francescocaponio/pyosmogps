@@ -11,8 +11,9 @@ logger = logging.getLogger(__name__)  # pylint: disable=C0103
 
 # Supported models:
 # dvtm_ac203.proto is the Osmo Action 4 camera model
-# dvtm_ac204.proto is the Osmo Action 5 camera model (untested, as I don't have one)
-supported_models = ["dvtm_ac203.proto", "dvtm_ac204.proto"]
+# dvtm_ac204.proto is the Osmo Action 5 camera model
+# dvtm_ac206.proto is the Osmo Action 6 camera model
+supported_models = ["dvtm_ac203.proto", "dvtm_ac204.proto", "dvtm_ac206.proto"]
 
 
 def check_camera_model(message):
