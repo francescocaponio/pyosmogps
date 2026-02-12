@@ -1,11 +1,11 @@
 # PyOsmoGPS
 
-PyOsmoGPS is a Python library designed to extract GPS data embedded in video files created by the DJI Osmo Action 4 or Osmo Action 5 cameras. It converts the GPS data into GPX files for further processing or analysis.
+PyOsmoGPS is a Python library designed to extract GPS data embedded in video files created by the DJI Osmo Action 4, Osmo Action 5 or Osmo Action 6 cameras. It converts the GPS data into GPX files for further processing or analysis.
 
 ## Features
 
 - Extracts GPS data from video files.
-- Supports DJI Osmo Action 4 and 5 cameras.
+- Supports DJI Osmo Action 4, 5 and 6 cameras.
 - Converts GPS data to standard GPX format.
 - Allows customization of output frequency and resampling methods.
 - Implements filtering and interpolation algorithms for better accuracy.
@@ -43,7 +43,7 @@ python -m pyosmogps ...
 
 ### Usage
 
-You can use PyOsmoGPS as a python library, a command-line tool or as a Docker container. The tool checks that the input video file is compatible with the DJI Osmo Action 4 or 5 cameras and that it contains GPS data, extracting it and converting it to a `.gpx` file. It can be used to create video overlays with GPS data or to analyze the GPS track.
+You can use PyOsmoGPS as a python library, a command-line tool or as a Docker container. The tool checks that the input video file is compatible with the DJI Osmo Action 4, 5 or 6 cameras and that it contains GPS data, extracting it and converting it to a `.gpx` file. It can be used to create video overlays with GPS data or to analyze the GPS track.
 
 The GPS data is stored when the camera is successfully connected to the remote controller and the GPS signal is acquired. The data is embedded in the video file and can be extracted using PyOsmoGPS.
 
