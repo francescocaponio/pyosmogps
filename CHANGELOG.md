@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.2.2] - 2026-02-12
+
+- Added compatibility with Osmo Action 6 cameras (#3)
+
 ## [v0.2.1] - 2025-01-28
 
 - Added compatibility for shorter videos (chunk offsets encoded in 32 bits)
