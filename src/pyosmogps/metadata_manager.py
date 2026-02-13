@@ -44,7 +44,7 @@ def check_camera_model(message):
         raise ValueError(
             "The camera model is not a supported Osmo Action camera (yet?)."
         )
-    return True
+    return camera_model
 
 
 def extract_gps_info(metadata, timezone_offset=0, extract_extensions=False):
@@ -56,7 +56,7 @@ def extract_gps_info(metadata, timezone_offset=0, extract_extensions=False):
         print(f"Error during the decode operation: {e}")
         exit(-1)
 
-    check_camera_model(message)
+    camera_model = check_camera_model(message)
 
     frame_rate = None
     try:
@@ -100,4 +100,4 @@ def extract_gps_info(metadata, timezone_offset=0, extract_extensions=False):
             logger.warning(f"Error parsing GPS entry: {e}")
             continue
 
-    return gps_data, frame_rate
+    return gps_data, frame_rate, camera_model

@@ -17,7 +17,7 @@ def _make_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "command",
-        choices=["extract", "merge"],
+        choices=["extract", "merge", "geotag"],
         help="Specify the command to run: 'extract' to extract "
         "GPS data or 'merge' to merge GPX files.",
     )
@@ -59,16 +59,17 @@ def _make_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def extract(inputs, output, frequency, resampling_method, timezone_offset=0) -> bool:
+def extract(inputs, output=None, frequency=2.0, resampling_method="linear", timezone_offset=0) -> bool:
     try:
         gps = OsmoGps(inputs, timezone_offset)
         gps.resample(frequency, resampling_method)
-        gps.save_gpx(output)
+        if output is not None:
+            gps.save_gpx(output)
 
     except Exception as e:
         logger.error(f"Error: {e}")
-        return False
-    return True
+        return None
+    return gps
 
 
 def main() -> int:
@@ -85,18 +86,25 @@ def main() -> int:
                 "'extract' command requires at least one input file and one "
                 "output file."
             )
-        success = extract(
+        gps = extract(
             args.inputs,
             args.output,
             args.frequency,
             args.resampling_method,
             args.timezone_offset,
         )
-        return 0 if success else 1
+        return 0 if gps is not None else 1
 
     elif args.command == "merge":
         print("Running merge command...")
         # TODO: Implement merge command
+
+    elif args.command == "geotag":
+        print("Running geotag command...")
+        gps = OsmoGps(args.inputs, args.timezone_offset)
+        for input_file in args.inputs:
+            gps.geotag(input_file)
+
     else:
         parser.print_help()
         parser.exit()

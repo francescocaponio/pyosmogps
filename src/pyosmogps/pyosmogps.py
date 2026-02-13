@@ -18,9 +18,11 @@ class OsmoGps:
     gps_data = None
     inputs = None
     input_frame_rate = None
+    camera_model = None
     output_frequency = None
     resampling_method = None
     extract_extensions = False
+    mp4 = None
 
     def __init__(self, inputs, timezone_offset=0, extract_extensions=False):
         if inputs is None:
@@ -39,14 +41,15 @@ class OsmoGps:
         for i, input_file in enumerate(self.inputs, start=1):
             logger.info(f"Processing file {i}/{len(self.inputs)}: {input_file}")
 
-            mp4 = MP4Manager(input_file)
-            metadata = mp4.get_metadata()
+            self.mp4 = MP4Manager(input_file)
+            metadata = self.mp4.get_metadata()
 
-            gps_info, input_frame_rate = extract_gps_info(
+            gps_info, input_frame_rate, camera_model = extract_gps_info(
                 metadata, self.timezone_offset, self.extract_extensions
             )
             logger.info(f"Frame rate: {input_frame_rate}")
             self.input_frame_rate = input_frame_rate
+            self.camera_model = camera_model
             logger.info(f"Extracted {len(gps_info)} GPS data points.")
 
             self.gps_data.extend(gps_info)
@@ -158,3 +161,29 @@ class OsmoGps:
 
     def get_longitude(self):
         return [point["longitude"] for point in self.gps_data]
+
+    def geotag(self, input_file):
+
+        latitude = self.get_latitude()[0] if self.get_latitude() else 0
+        longitude = self.get_longitude()[0] if self.get_longitude() else 0
+        altitude = self.get_altitude()[0] if self.get_altitude() else 0
+        camera_model = self.camera_model if self.camera_model else "Unknown"
+        creation_date = self.gps_data[0]['timeinfo'] if self.gps_data else None
+
+        print(
+            f"Geotagging {input_file} with latitude: {latitude}, longitude: {longitude}, "
+            f"altitude: {altitude}, camera model: {camera_model}, creation date: {creation_date}"
+        )
+
+        output_file = input_file.rsplit(".", 1)[0] + "_geotagged." + input_file.rsplit(".", 1)[1]
+
+        self.mp4.write_udta_mdta(
+            output_file,
+            lat = latitude,
+            lon = longitude,
+            alt_m = altitude,
+            make = "DJI",
+            model = camera_model,
+            creationdate = creation_date,
+        )
+ 
